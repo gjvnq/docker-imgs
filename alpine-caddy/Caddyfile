@@ -1,0 +1,21 @@
+:80 {
+	root * /srv/
+	file_server browse
+
+	try_files {path} {path}/index.php {path}/index.html =404
+
+	# Ensure that .well-known works
+	handle_path /.well-known {
+		try_files {path} =404
+	}
+
+	# Block all other hidden files
+	handle_path .* {
+		respond 404
+	}
+
+	handle_errors {
+		rewrite * /{err.status_code}.html
+		file_server
+	}
+}

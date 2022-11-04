@@ -1,0 +1,25 @@
+:80 {
+	root * /srv/
+	file_server browse
+	php_fastcgi 127.0.0.1:9000
+
+	try_files {path} {path}/index.php {path}/index.html =404
+
+	# In case you need something like Wordpress or MediaWiki
+	# try_files {path} {path}/ /index.php?_uri={path}&{query}
+
+	# Ensure that .well-known works
+	handle_path /.well-known {
+		try_files {path} =404
+	}
+
+	# Block all other hidden files
+	handle_path .* {
+		respond 404
+	}
+
+	handle_errors {
+		rewrite * /{err.status_code}.html
+		file_server
+	}
+}
